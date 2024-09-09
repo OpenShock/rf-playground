@@ -1,3 +1,5 @@
+#ifdef MODE_TX_SIMPLE
+
 #include <collar.h>
 
 /*
@@ -44,3 +46,4 @@ void loop()
 
 }
 
+#endif

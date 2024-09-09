@@ -72,6 +72,9 @@ const char *CollarRx::mode_to_str(collar_mode mode)
     case BEEP:
       return "Beep";
 
+    case LIGHT:
+      return "Light";
+
     default:
       return "MODE?";
   }

@@ -3,7 +3,7 @@
 #define TYPE1_START_PULSE_LEN_US 2200
 #define TYPE1_START_PULSE_TOLLERANCE 100
 #define TYPE1_PULSE_LEN_US 1000
-#define TYPE1_PULSE_TOLLERANCE 100
+#define TYPE1_PULSE_TOLLERANCE 200
 #define TYPE1_HIGH_THERESHOLD 500
 
 CollarRxType1::CollarRxType1(uint8_t rx_pin, msg_cb_t cb, void *userdata, uint16_t id) : CollarRx { rx_pin, cb, userdata, id }

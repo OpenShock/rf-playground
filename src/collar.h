@@ -8,7 +8,7 @@
 // show running ISR on defined pin for debug
 #define ISR_MONITOR_PIN 5
 
-enum collar_mode { SHOCK=1, VIBE=2, BEEP=3 };
+enum collar_mode { SHOCK=1, VIBE=2, BEEP=3, LIGHT=4 };
 enum collar_channel { CH1=0, CH2=1, CH3=2 };
 
 struct collar_message

@@ -1,3 +1,5 @@
+#ifdef MODE_TX
+
 #include <collar.h>
 
 /*
@@ -15,13 +17,28 @@
 
 
 // Set this to whichever pin has the 433MHz transmitter connected to it
-const uint8_t  tx_pin = 7;
+const uint8_t  tx_pin = 12;
 
 // Either set this to the id of the original transmitter,
 // or make a value up and re-pair
-const uint16_t transmitter_id = 0x04D2;
+const uint16_t transmitter_id = 0xABAA;
 
 CollarTx *_tx;
+
+void print_help()
+{
+  Serial.println("\nExpected command format:");
+  Serial.println("  <channel><command><power>");
+  Serial.println("where:");
+  Serial.println("   channel = 1-3");
+  Serial.println("   command = B, S, V (Beep, Shock, Vibrate, Light)");
+  Serial.println("   power   = 00-99");
+  Serial.println();
+  Serial.println("e.g.:");
+  Serial.println("  1V05 - Vibrate channel 1 at power 5");
+  Serial.println("  2S10 - Shock channel 2 at power 10");
+  Serial.println();  
+}
 
 void setup()
 {
@@ -32,51 +49,6 @@ void setup()
   // Change "CollarTxType1" to "CollarTxType2" below if nessesary
   _tx =  new CollarTxType1(tx_pin, transmitter_id);
   print_help();
-}
-
-void print_help()
-{
-  Serial.println("\nExpected command format:");
-  Serial.println("  <channel><command><power>");
-  Serial.println("where:");
-  Serial.println("   channel = 1-3");
-  Serial.println("   command = B, S, V (Beep, Shock, Vibrate)");
-  Serial.println("   power   = 00-99");
-  Serial.println();
-  Serial.println("e.g.:");
-  Serial.println("  1V05 - Vibrate channel 1 at power 5");
-  Serial.println("  2S10 - Shock channel 2 at power 10");
-  Serial.println();  
-}
-
-void loop()
-{
-  static char serial_buffer[8];
-  static uint8_t serial_pos=0;
-
-  while (Serial.available() > 0)
-  {
-    char c = Serial.read();
-
-    if ((c == '\n') || (c == '\r'))
-    {
-      serial_buffer[serial_pos] = '\0';
-
-      if (serial_pos > 0)
-      {
-        process_message(serial_buffer);
-        memset(serial_buffer, 0, sizeof(serial_buffer));
-        serial_pos = 0;
-      }
-    }
-    else
-    {
-      if (serial_pos < (sizeof(serial_buffer)-1))
-      {
-        serial_buffer[serial_pos++] = c;
-      }
-    }
-  }
 }
 
 void process_message(const char *input_message)
@@ -129,6 +101,11 @@ void process_message(const char *input_message)
       mode = VIBE;
       break;
 
+    case 'L':
+    case 'l':
+      mode = LIGHT;
+      break;
+
     default:
       Serial.println("Unexpected mode");
       return;
@@ -140,3 +117,34 @@ void process_message(const char *input_message)
   _tx->transmit(channel, mode, power);
 }
 
+void loop()
+{
+  static char serial_buffer[8];
+  static uint8_t serial_pos=0;
+
+  while (Serial.available() > 0)
+  {
+    char c = Serial.read();
+
+    if ((c == '\n') || (c == '\r'))
+    {
+      serial_buffer[serial_pos] = '\0';
+
+      if (serial_pos > 0)
+      {
+        process_message(serial_buffer);
+        memset(serial_buffer, 0, sizeof(serial_buffer));
+        serial_pos = 0;
+      }
+    }
+    else
+    {
+      if (serial_pos < (sizeof(serial_buffer)-1))
+      {
+        serial_buffer[serial_pos++] = c;
+      }
+    }
+  }
+}
+
+#endif
